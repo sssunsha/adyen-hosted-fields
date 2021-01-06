@@ -33,7 +33,10 @@ app.use('/users', usersRouter);
 app.use('/e2e', e2eTestRouter);
 // The checkout route
 var checkout = require('./routes/checkout');
+var paymentMethodsRouter = require('./routes/payment_methods');
+
 app.use('/submit', checkout);
+app.use('/payment-methods', paymentMethodsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

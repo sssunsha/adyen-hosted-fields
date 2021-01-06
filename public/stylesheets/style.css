@@ -16,3 +16,12 @@ a {
 #e2e-form {
   margin-right: 20px;
 }
+
+#error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+#checkout-message {
+  margin-top: 10px;
+}
