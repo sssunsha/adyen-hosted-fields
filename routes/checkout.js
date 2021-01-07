@@ -17,12 +17,13 @@ router.post('/', function (req, res, next) {
         amount: { currency: 'USD', value: 1000 },
         riskData: req.body.riskData,
         additionalData : {
-            allow3DS2: true
+            allow3DS2: req.headers['is3ds2']
          },
+         origin: 'http://localhost:3000/e2e',
+        returnUrl: 'http://localhost:3000/redirect-return',
         browserInfo: req.body.browserInfo,
         channel: 'web',
-        reference: '9527',
-        returnUrl: 'http://localhost:3000/redirect-return'
+        reference: '9527'
     }).then(result => {
         res.send(result)}, function(reason) {
             console.log(reason);

@@ -19,23 +19,36 @@
   <div>
     <form id="e2e-form">
       <label>Order id: </label>
-      <p></p>
+      <p>
       <input type="text" id="e2e-orderId" value="">
-      <p></p>
+      <p>
       <label>customer session id: </label>
-      <p></p>
+      <p>
       <input type="text" id="e2e-customerSessionId" value="">
-      <p></p>
+      <p>
       <label>consumer jwt token (with Bearer): </label>
-      <p></p>
+      <p>
       <textarea id="jwt-token" rows="10" cols="10"></textarea>
-      <p></p>
+      <p>
+      <label><b>action type:</b></label>
+      <input type="checkbox" id="action-type">
+      <p>
+      <label>redirect - <b>unchecked</b></label><p>
+      <label>threeDS2Fingerprint & threeDS2Challenge - <b>checked</b></label><p>
+      <p>
       <input type="submit" id="e2e-start" value="start">
     </form>
     <div id="helper">
       test card for additional action type:
-      <p></p>
-      redirect: 4917610000000000 03/30 737
+      <p>
+      <b>Expiry date:</b> 03/30
+      <p>
+      <b>CVC/CVV:</b> 737
+      <p>
+      <b>card:</b> 4917610000000000
+      <p>
+      <b>reference</b> <a
+        href="https://docs.adyen.com/development-resources/test-cards/test-card-numbers#test-3d-secure-2-authentication">Link</a>
     </div>
   </div>
   <div>

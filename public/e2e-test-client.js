@@ -8,6 +8,7 @@ function makePayment(data) {
         url: '/submit',
         headers: {
             'Content-Language': 'en-us',
+            'is3ds2': $("#action-type:checked").val() == 'on' ? true : false
             // 'Authorization': authorization,
             // 'Customer-session-id': customerSessionId
         },
@@ -20,7 +21,7 @@ function makeDetailsCall(data) {
         type: 'POST',
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
-        url: '/submit',
+        url: '/submit-complete',
         data: JSON.stringify(data)
     });
 }
@@ -112,6 +113,9 @@ window.onload = function () {
     var checkout;
     var dropin;
 
-    // step1: Get available payment methods
-    fetchPaymentMethod();
+    document.querySelector("#e2e-form").addEventListener('submit',function(event){
+        event.preventDefault();
+        // step1: Get available payment methods
+        fetchPaymentMethod();
+    });
 }
