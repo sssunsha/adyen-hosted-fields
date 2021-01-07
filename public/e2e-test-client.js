@@ -16,15 +16,23 @@ function makePayment(data) {
 }
 
 function makeDetailsCall(data) {
-
+    return $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        url: '/submit',
+        data: JSON.stringify(data)
+    });
 }
 
 function showFinalResult(response) {
     if (response) {
         if (response.resultCode == 'Authorised') {
             $("#checkout-message").html(response.resultCode + " : " + response.merchantReference + " : " + response.pspReference);
+        } else if(response.resultCode == 'Refused') {
+            $("#merror-message").html(response.resultCode + " : " + response.refusalReason);
         } else {
-            $("#merror-message").html(response.resultCode + " ( detail please check the logs)");
+            $("#merror-message").html(response.resultCode + " : (please check the logs for details.)");
         }
 
         console.log(response);
@@ -78,7 +86,8 @@ function createPaymentConfiguration(paymentMethodsResponse) {
                 holderNameRequired: true,
                 enableStoreDetails: true,
                 hideCVC: false, // Change this to true to hide the CVC field for stored cards
-                name: 'Credit or debit card'
+                name: 'Credit or debit card',
+                billingAddressRequired: false
             }
         }
     };

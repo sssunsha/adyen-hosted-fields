@@ -14,10 +14,19 @@ router.post('/', function (req, res, next) {
         merchantAccount: config.merchantAccount,
         // STATE_DATA is the paymentMethod field of an object passed from the front end or client app, deserialized from JSON to a data structure.
         paymentMethod: req.body.paymentMethod,
-        amount: { currency: 'USD', value: 1000, },
+        amount: { currency: 'USD', value: 1000 },
+        riskData: req.body.riskData,
+        additionalData : {
+            allow3DS2: true
+         },
+        browserInfo: req.body.browserInfo,
+        channel: 'web',
         reference: '9527',
-        returnUrl: 'http://localhost:3000/adyen_return.html'
-    }).then(result => res.send(result));
+        returnUrl: 'http://localhost:3000/redirect-return'
+    }).then(result => {
+        res.send(result)}, function(reason) {
+            console.log(reason);
+        });
 });
 
 module.exports = router;

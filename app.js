@@ -34,9 +34,12 @@ app.use('/e2e', e2eTestRouter);
 // The checkout route
 var checkout = require('./routes/checkout');
 var paymentMethodsRouter = require('./routes/payment_methods');
-
+var submitComplete = require('./routes/submit-complete');
+var redirectReturn = require('./routes/redirect-return');
 app.use('/submit', checkout);
 app.use('/payment-methods', paymentMethodsRouter);
+app.use('/submit-complete', submitComplete);
+app.use('/redirect-return', redirectReturn);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
