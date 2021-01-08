@@ -7,9 +7,10 @@
 
   <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.18.2/adyen.css"
     integrity="sha384-5K4T5NNVv7ZBvNypROEUSjvOL45HszUg/eYfYadY82UF4b+hc+TPQ4SsfTGXufJp" crossorigin="anonymous">
-  <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.18.2/adyen.js"
+  {{!-- <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.18.2/adyen.js"
     integrity="sha384-/5SuEQKK7mLmDWB+eUPAur02KPkNC7pwAqyPez1TuNjeqRjsNDJdAnrbSxrzua2P"
-    crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script> --}}
+  <script src="/adyen.js"></script>
 
   <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
   <script src="/e2e-test-client.js"></script>
@@ -20,35 +21,41 @@
     <form id="e2e-form">
       <label>Order id: </label>
       <p>
-      <input type="text" id="e2e-orderId" value="">
+        <input type="text" id="e2e-orderId" value="">
       <p>
-      <label>customer session id: </label>
+        <label>customer session id: </label>
       <p>
-      <input type="text" id="e2e-customerSessionId" value="">
+        <input type="text" id="e2e-customerSessionId" value="">
       <p>
-      <label>consumer jwt token (with Bearer): </label>
+        <label>consumer jwt token (with Bearer): </label>
       <p>
-      <textarea id="jwt-token" rows="10" cols="10"></textarea>
+        <textarea id="jwt-token" rows="10" cols="10"></textarea>
       <p>
-      <label><b>action type:</b></label>
-      <input type="checkbox" id="action-type">
+        <label><b>action type:</b></label>
+        <input type="checkbox" id="action-type">
       <p>
-      <label>redirect - <b>unchecked</b></label><p>
-      <label>threeDS2Fingerprint & threeDS2Challenge - <b>checked</b></label><p>
+        <label>redirect - <b>unchecked</b></label>
       <p>
-      <input type="submit" id="e2e-start" value="start">
+        <label>threeDS2Fingerprint & threeDS2Challenge - <b>checked</b></label>
+      <p>
+      <p>
+        <input type="submit" id="e2e-start" value="start">
     </form>
     <div id="helper">
       test card for additional action type:
       <p>
-      <b>Expiry date:</b> 03/30
+        <b>Expiry date:</b> 03/30
       <p>
-      <b>CVC/CVV:</b> 737
+        <b>CVC/CVV:</b> 737
       <p>
-      <b>card:</b> 4917610000000000
+        <b>card:</b> 4917610000000000
       <p>
-      <b>reference</b> <a
-        href="https://docs.adyen.com/development-resources/test-cards/test-card-numbers#test-3d-secure-2-authentication">Link</a>
+        <b>User:</b> user
+      <p>
+        <b>password:</b> password
+      <p>
+        <b>reference</b> <a
+          href="https://docs.adyen.com/development-resources/test-cards/test-card-numbers#test-3d-secure-2-authentication">Link</a>
     </div>
   </div>
   <div>

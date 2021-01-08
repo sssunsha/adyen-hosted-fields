@@ -8,7 +8,7 @@ a {
 }
 
 textarea {
-  width: 100%;
+  width: 70%;
 }
 
 
@@ -23,9 +23,13 @@ textarea {
 }
 
 #e2e-start {
-  width: 100%;
+  width: 70%;
   height: 30px;
   font-size: 16px;
+}
+
+#dropin-container {
+  min-width: 600px;
 }
 
 #error-message {
