@@ -10,7 +10,10 @@ router.post('/', function (req, res, next) {
     client.setEnvironment("TEST");
     const checkout = new CheckoutAPI(client);
     // STATE_DATA is an object passed from the front end or client app, deserialized from JSON to a data structure.
-    checkout.paymentsDetails(req.body).then(result => res.send(result));
+    checkout.paymentsDetails(req.body).then(result => {
+        res.send(result)}, function(reason) {
+            console.log(reason);
+        });
 });
 
 module.exports = router;
