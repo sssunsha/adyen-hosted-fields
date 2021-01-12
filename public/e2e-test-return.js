@@ -1,7 +1,7 @@
 
 window.onload = function () {
-    md = $("#MD").val();
-    pares = $("#PaRes").val();
+    md = $("#MD").text();
+    pares = $("#PaRes").text();
     paymentData = localStorage.getItem("redirect-paymentData");
 
     if (md && pares && paymentData) {
@@ -19,14 +19,14 @@ window.onload = function () {
             contentType: 'application/json; charset=utf-8',
             url: '/submit-complete',
             data: JSON.stringify(data)
-        }).done(function(result) {
+        }).done(function(response) {
             if (response) {
                 if (response.resultCode == 'Authorised') {
                     $("#checkout-message").html(response.resultCode + " : " + response.merchantReference + " : " + response.pspReference);
                 } else if (response.resultCode == 'Refused') {
-                    $("#merror-message").html(response.resultCode + " : " + response.refusalReason);
+                    $("#error-message").html(response.resultCode + " : " + response.refusalReason);
                 } else {
-                    $("#merror-message").html(response.resultCode + " : (please check the logs for details.)");
+                    $("#error-message").html(response.resultCode + " : (please check the logs for details.)");
                 }
         
                 console.log(response);
