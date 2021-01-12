@@ -1,7 +1,7 @@
 // // Adyen account: SAPCOM_TEST_GATEWAY
 workingMode = 'payment';
 
-function fetchPaymentMethods() {
+function getPaymentMethods() {
     if (workingMode == 'payment') {
         if (orderId.value) {
             // start to post the initiate request
@@ -186,10 +186,10 @@ window.onload = function () {
     orderId = document.querySelector('#e2e-orderId');
     customerSessionId = document.querySelector('#e2e-customerSessionId');
     jwtToken = document.querySelector('#jwt-token');
-    document.querySelector("#e2e-form").addEventListener('submit', function (event) {
+    $("#e2e-form").submit(function (event) {
         event.preventDefault();
         // step1: Get available payment methods
-        fetchPaymentMethods().done(res => {
+        getPaymentMethods().done(res => {
             console.log(res);
             const paymentMethodsResponse = res;
             const configuration = createPaymentConfiguration(paymentMethodsResponse);
