@@ -49,8 +49,7 @@ $(function () {
                 }).done(function (result) {
                     if (result && result.pattern == 'HOSTED_FIELDS') {
                         // start to render the hosted fileds with the response result
-                        var htmlSrcUrl = window.URL.createObjectURL(new Blob([result.dynamicScript.html], { type: 'text/html;charset=utf-8' }))
-                        console.log(htmlSrcUrl);
+                        const htmlSrcUrl = window.URL.createObjectURL(new Blob([result.dynamicScript.html], {type: 'text/html;charset=utf-8'}))
                         dropInUI.src = htmlSrcUrl;
                         // set local storage
                         localStorage.setItem("Authorization", jwtToken.value);
@@ -59,9 +58,10 @@ $(function () {
                 });
             }
         } else {
-            var dropInContainer = document.createElement('div');
-            dropInContainer.id = 'dropin-container';
-            dropInUI.appendChild(dropInContainer);
+            // const ifrdoc = dropInUI.contentWindow.document;
+            // ifrdoc.open();
+			// ifrdoc.write('<div id="dropin-container"></div>');
+			// ifrdoc.close();
             return $.ajax({ url: '/payment-methods' });
         }
     }
@@ -191,7 +191,7 @@ $(function () {
             const paymentMethodsResponse = res;
             const configuration = createPaymentConfiguration(paymentMethodsResponse);
             const checkout = new AdyenCheckout(configuration);
-            const dropin = checkout.create('dropin').mount('#dropin-container');
+            const dropin = checkout.create('dropin').mount('#dropin-container-local');
         });
     });
 });

@@ -1,0 +1,308 @@
+{
+    "id": 807,
+    "pattern": "HOSTED_FIELDS",
+    "requestType": "AUTHORIZATION",
+    "outboundMapping": {
+      "url": "https://checkout-test.adyen.com/v66/payments",
+      "authenticationIds": [2],
+      "method": "POST",
+      "requestContentType": "application/json",
+      "requestExample": "{\n\t\"amount\": {\n\t\t\"currency\": \"USD\",\n\t\t\"value\": 10\n\t},\n\t\"additionalData\": {\n\t\t\"allow3DS2\": true\n\t},\n\t\"channel\": \"web\",\n\t\"reference\": \"9527\",\n\t\"paymentMethod\": \"PAYMENT_METHOD\",\n\t\"origin\": \"http://localhost:3000/e2e\",\n\t\"returnUrl\": \"http://localhost:3000/redirect-return\",\n\t\"merchantAccount\": \"SAPCOM_TEST_GATEWAY\"\n}",
+      "responseExample": "{\n   \"resultCode\":\"IdentifyShopper\",\n   \"action\":{\n     \"paymentData\":\"Ab02b4c0!BQABAgCuZFJrQOjSsl\\/zt+...\",\n     \"paymentMethodType\":\"scheme\",\n     \"token\":\"eyJ0aHJlZURTTWV0aG9kTm90aWZpY...\",\n     \"type\":\"threeDS2Fingerprint\"\n   },\n   \"authentication\":{\n     \"threeds2.fingerprintToken\":\"eyJ0aHJlZURTTWV0aG9kTm90aWZpY...\"\n   },\n   \"details\":[\n     {\n       \"key\":\"threeds2.fingerprint\",\n       \"type\":\"text\"\n     }\n   ],\n  \"pspReference\": \"852610335894468F\",\n  \"errorCode\": \"14_036\"\n\n}",
+      "requestMappingFields": {
+        "mappings": [
+          {
+            "from": "$.reference",
+            "to": "${input.referenceId}",
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.amount.currency",
+            "to": "${input.currency}",
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.amount.value",
+            "to": "${input.amount}",
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.merchantAccount",
+            "to": "${vars.merchantCode}",
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.channel",
+            "to": "${input.channel}",
+            "map": {
+              "BROWSER": "WEB"
+            },
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.paymentMethod",
+            "to": "${input.additionalData.paymentMethod}",
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.origin",
+            "to": "http://localhost:3000/e2e",
+            "arrayMapping": false,
+            "fixed": true
+          },
+          {
+            "from": "$.returnUrl",
+            "to": "${input.redirectUrl}",
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.additionalData.allow3DS2",
+            "to": "${input.additionalData.allow3DS2}",
+            "arrayMapping": false,
+            "fixed": false
+          }
+        ]
+      },
+      "responseMappingFields": {
+        "mappings": [
+          {
+            "from": "action.paymentData",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "action.type",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "action.paymentMethodType",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "action.token",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "details[*].type",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "details[*].key",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "authentication.['threeds2.fingerprintToken']",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "errorCode",
+            "to": "errorCode",
+            "arrayMapping": false,
+            "fixed": false,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "pspReference",
+            "to": "pspReference",
+            "arrayMapping": false,
+            "fixed": false,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "resultCode",
+            "to": "transactionStatus",
+            "arrayMapping": false,
+            "fixed": false,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "action.#object",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "['details.#object']",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "authentication.#object",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          }
+        ]
+      },
+      "responseContentType": "application/json"
+    },
+    "dynamicScript": {
+      "cssUrl": "https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.18.2/adyen.css",
+      "jsUrl": "https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.18.2/adyen.js",
+      "html": "<script src=\"http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js\"></script>\n<script src=\"https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.18.2/adyen.js\"></script>\n<link rel=\"stylesheet\" href=\"https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.18.2/adyen.css\">\n\n<div id=\"dropin-container\"></div>\n<script>\n    const orderId = '${input.orderId}';\n    const referenceId = '${input.referenceId}';\n    const amount = '${input.amount}';\n    const resultURL = '${input.resultURL}';\n    const contentLanguage = '${input.languageCode}-${input.countryCode}';\n    const submitApiUrl = '${input.submitURL}';\n    const submitCompleteApiUrl = '';\n    const authorization = localStorage.getItem('o-auth-token') || localStorage.getItem('Authorization') || '';\n    const customerSessionId = localStorage.getItem('guest-customer-session-id') || localStorage.getItem('Customer-session-id') || '';\n    const paymentMethodsResponse = JSON.parse('${input.responseBody}'.replaceAll('&quot;', '\"'));\n    const clientKey = '${vars.clientKey}';\n    const environment = 'test';\n    const paymentFormTitle = '${vars.paymentFormTitle}';\n\n\n    function makePayment(data) {\n        const additionalData = [\n            {\n                'key': 'paymentMethod',\n                'value': data.paymentMethod\n            },\n            {\n                'key': 'allow3DS2',\n                'value': true\n            }];\n\n        const submitBody = {\n            'paymentMethod': 'CREDIT_CARD',\n            'channel': 'BROWSER',\n            'amount': amount,\n            'orderId': orderId,\n            'upscalePaymentSessionID': referenceId,\n            'browserInfo': data.browserInfo,\n            'additionalData': additionalData\n        }\n        return $.ajax({\n            type: 'POST',\n            dataType: 'json',\n            contentType: 'application/json; charset=utf-8',\n            url: submitApiUrl,\n            headers: {\n                'Content-Language': contentLanguage,\n                'Authorization': authorization,\n                'Customer-session-id': customerSessionId\n            },\n            data: JSON.stringify(submitBody)\n        });\n    }\n\n    function makeDetailsCall(data) {\n        const additionalData = [\n            {\n                'key': 'state_data',\n                'value': data\n            }];\n        const submitCompleteBody = {\n            'upscalePaymentSessionID': referenceId,\n            'additionalData': additionalData\n        }\n        return $.ajax({\n            type: 'POST',\n            dataType: 'json',\n            contentType: 'application/json; charset=utf-8',\n            url: submitCompleteApiUrl,\n            data: JSON.stringify(submitCompleteBody)\n        });\n    }\n\n    function showFinalResult(response) {\n        if (response) {\n            console.log(response);\n        }\n    }\n\n    function createPaymentConfiguration(paymentMethodsResponse) {\n        return {\n            paymentMethodsResponse: paymentMethodsResponse, // The `/paymentMethods` response from the server.\n            clientKey: clientKey, // Web Drop-in versions before 3.10.1 use originKey instead of clientKey.\n            locale: contentLanguage,\n            environment: environment,\n            onSubmit: (state, dropin) => {\n                // Your function calling your server to make the `/payments` request\n                makePayment(state.data)\n                    .then(response => {\n                        if (response.action) {\n                            // Drop-in handles the action object from the /payments response\n                            dropin.handleAction(response.action);\n                        } else {\n                            // Your function to show the final result to the shopper\n                            showFinalResult(response);\n                        }\n                    })\n                    .catch(error => {\n                        throw Error(error);\n                    });\n            },\n            onAdditionalDetails: (state, dropin) => {\n                // Your function calling your server to make a `/payments/details` request\n                makeDetailsCall(state.data)\n                    .then(response => {\n                        if (response.action) {\n                            // Drop-in handles the action object from the /payments response\n                            dropin.handleAction(response.action);\n                        } else {\n                            // Your function to show the final result to the shopper\n                            showFinalResult(response);\n                        }\n                    })\n                    .catch(error => {\n                        throw Error(error);\n                    });\n            },\n            paymentMethodsConfiguration: {\n                card: { // Example optional configuration for Cards\n                    hasHolderName: true,\n                    holderNameRequired: true,\n                    enableStoreDetails: true,\n                    hideCVC: false, // Change this to true to hide the CVC field for stored cards\n                    name: paymentFormTitle,\n                    billingAddressRequired: false\n                }\n            }\n        };\n    }\n\n    configuration = createPaymentConfiguration(paymentMethodsResponse);\n    checkout = new AdyenCheckout(configuration);\n    dropin = checkout.create('dropin').mount('#dropin-container');\n</script>",
+      "cssUrls": [
+        {
+          "url": "https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.18.2/adyen.css"
+        }
+      ],
+      "jsUrls": [
+        {
+          "url": "https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.18.2/adyen.js"
+        }
+      ]
+    },
+    "remoteApiOutboundMapping": {
+      "url": "https://checkout-test.adyen.com/v66/paymentMethods",
+      "authenticationIds": [
+        2
+      ],
+      "method": "POST",
+      "requestContentType": "application/json",
+      "requestExample": "{\n\t\"merchantAccount\": \"SAPCOM_TEST_GATEWAY\",\n\t\"countryCode\": \"US\",\n\t\"amount\": {\n\t\t\"currency\": \"USD\",\n\t\t\"value\": 10\n\t},\n\t\"channel\": \"Web\",\n\t\"shopperLocale\": \"en-US\"\n}",
+      "responseExample": "{\n    \"paymentMethods\": [\n        {\n            \"brands\": [\n                \"visa\",\n                \"mc\"\n            ],\n            \"details\": [\n                {\n                    \"key\": \"number\",\n                    \"type\": \"text\"\n                },\n                {\n                    \"key\": \"expiryMonth\",\n                    \"type\": \"text\"\n                },\n                {\n                    \"key\": \"expiryYear\",\n                    \"type\": \"text\"\n                },\n                {\n                    \"key\": \"cvc\",\n                    \"type\": \"text\"\n                },\n                {\n                    \"key\": \"holderName\",\n                    \"optional\": true,\n                    \"type\": \"text\"\n                }\n            ],\n            \"name\": \"Credit Card\",\n            \"type\": \"scheme\"\n        }\n    ]\n}",
+      "requestMappingFields": {
+        "mappings": [
+          {
+            "from": "$.amount.currency",
+            "to": "${input.currency}",
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.amount.value",
+            "to": "${input.amount}",
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.merchantAccount",
+            "to": "${vars.merchantCode}",
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.countryCode",
+            "to": "${input.countryCode}",
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.channel",
+            "to": "${input.channel}",
+            "arrayMapping": false,
+            "fixed": false
+          },
+          {
+            "from": "$.shopperLocale",
+            "to": "${input.languageCode}",
+            "arrayMapping": false,
+            "fixed": false
+          }
+        ]
+      },
+      "responseMappingFields": {
+        "mappings": [
+          {
+            "from": "$paymentMethods.#text",
+            "to": "paymentMethods",
+            "arrayMapping": false,
+            "fixed": false,
+            "isCustom": true,
+            "persistCustomField": false
+          },
+          {
+            "from": "['paymentMethods.#object']",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "paymentMethods[*].['brands.#object']",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "paymentMethods[*].name",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "paymentMethods[*].['details.#object']",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          },
+          {
+            "from": "paymentMethods[*].type",
+            "arrayMapping": false,
+            "fixed": true,
+            "isCustom": false,
+            "persistCustomField": false
+          }
+        ]
+      },
+      "responseContentType": "application/json"
+    },
+    "verify": {
+      "localVerifyMapping": {
+        "mappings": [
+          {
+            "from": "authResult",
+            "to": "result",
+            "map": {
+              "AUTHORISED": "AUTHORIZED",
+              "UNAUTHORISED": "UNAUTHORIZED",
+              "CANCELLED": "CANCELLED",
+              "AUTHORIZED": "AUTHORIZED",
+              "UNAUTHORIZED": "UNAUTHORIZED"
+            },
+            "arrayMapping": false,
+            "fixed": false,
+            "isCustom": false,
+            "persistCustomField": false
+          }
+        ]
+      },
+      "localVerifyAuthenticationId": 200
+    }
+  }
