@@ -18,6 +18,10 @@
 
 <body class="e2e-body">
   <div>
+    <span>1. Please first use postman or swagger to create an order, and calculate cost, etc. then copy/paste relative information here</span>
+    <br>
+    <span>2. for login consumer, please paste token, for anonymous please paste customer session id</span>
+    <p>
     <form id="e2e-form">
       <label>Order id: </label>
       <p>
@@ -30,6 +34,11 @@
         <label>consumer jwt token (with Bearer): </label>
       <p>
         <textarea id="jwt-token" rows="10" cols="10"></textarea>
+      <p>
+        <select name="working-mode" id="working-mode">
+          <option value="payment" selected>call Upscale payment service</option>
+          <option value="adyen">call Adyen</option>
+        </select>
       <p>
         <label><b>action type:</b></label>
         <input type="checkbox" id="action-type">
@@ -57,11 +66,11 @@
         <b>reference</b> <a
           href="https://docs.adyen.com/development-resources/test-cards/test-card-numbers#test-3d-secure-2-authentication">Link</a>
     </div>
+    <div id="checkout-message" class="message"></div>
+    <div id="error-message" class="message"></div>
   </div>
-  <div>
-    <div id="dropin-container"></div>
-    <div id="checkout-message"></div>
-    <div id="error-message"></div>
+  <div id="dropin-ui">
+    {{!-- <div id="dropin-container"></div> --}}
   </div>
 </body>
 

@@ -14,8 +14,7 @@ router.post('/', function (req, res, next) {
         merchantAccount: config.merchantAccount,
         // STATE_DATA is the paymentMethod field of an object passed from the front end or client app, deserialized from JSON to a data structure.
         paymentMethod: req.body.paymentMethod,
-        amount: { currency: 'USD', value: 1000 },
-        riskData: req.body.riskData,
+        amount: { currency: 'USD', value: 10 },
         additionalData : {
             allow3DS2: req.headers['is3ds2']
          },

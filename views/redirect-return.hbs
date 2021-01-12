@@ -1,1 +1,19 @@
-This is the demo adyen drop-in return url page
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+  </head>
+  <body>  
+    <label>MD:</label><br>
+    <label id="MD">{{md}}</label><p>
+    <label>PaRes</label><br>
+    <label id="PaRes">{{pares}}</label>
+    <div>
+        <div id="checkout-message" class="message"></div>
+        <div id="error-message" class="message"></div>
+    </div>
+    <script src="/e2e-test-return.js"></script>
+  </body>
+</html>

@@ -1,36 +1,119 @@
-// Adyen account: SAPCOM_TEST_GATEWAY
+// // Adyen account: SAPCOM_TEST_GATEWAY
+workingMode = 'payment';
+
+function fetchPaymentMethods() {
+    if (workingMode == 'payment') {
+        if (orderId.value) {
+            // start to post the initiate request
+            const requestBody = {
+                'orderId': orderId.value,
+                'emailAddress': 'upscale@sap.com',
+                'resultURL': 'https://example.com/success',
+                'cancelURL': 'https://example.com/cancel',
+                'channel': 'BROWSER',
+                'billingAddress': {
+                    'firstName': 'brainTree',
+                    'lastName': 'localE2ETest',
+                    'addressLine1': '123 Main Street',
+                    'addressLine2': '123 Main Street',
+                    'addressLine3': '123 Main Street',
+                    'city': 'Small Town',
+                    'state': 'CA',
+                    'country': 'US',
+                    'postalCode': 98765
+                },
+                'browserInfo': {
+                    'acceptHeader': 'text/html',
+                    'colorDepth': 48,
+                    'javaEnabled': false,
+                    'javaScriptEnabled': false,
+                    'language': 'de',
+                    'screenHeight': 1200,
+                    'screenWidth': 1600,
+                    'userAgent': 'Mozilla/4.0',
+                    'timezoneOffset': 60,
+                    'ipAddress': '192.168.0.1',
+                    'originUrl': 'https://example.com'
+                }
+            }
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                url: 'https://gateway-approuter-caas2-sap-test.cfapps.us10.hana.ondemand.com/consumer/payment-service/gateway/initiate',
+                headers: {
+                    'Customer-session-id': customerSessionId.value,
+                    'Authorization': jwtToken.value,
+                    'Content-Language': 'en-us'
+                },
+                data: JSON.stringify(requestBody)
+            }).done(function (result) {
+                if (result && result.pattern == 'HOSTED_FIELDS') {
+                    // start to render the hosted fileds with the response result
+                    var htmlSrcUrl = window.URL.createObjectURL(new Blob([result.dynamicScript.html], { type: 'text/html;charset=utf-8' }))
+                    console.log(htmlSrcUrl);
+                    dropInUI.src = htmlSrcUrl;
+                    // set local storage
+                    localStorage.setItem("Authorization", jwtToken.value);
+                    localStorage.setItem("Customer-session-id", customerSessionId.value);
+                }
+            });
+        }
+    } else {
+        var dropInContainer = document.createElement('div');
+        dropInContainer.id = 'dropin-container';
+        dropInUI.appendChild(dropInContainer);
+        return $.ajax({ url: '/payment-methods' });
+    }
+}
 
 function makePayment(data) {
-    return $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8',
-        url: '/submit',
-        headers: {
-            'Content-Language': 'en-us',
-            'is3ds2': $("#action-type:checked").val() == 'on' ? true : false
-            // 'Authorization': authorization,
-            // 'Customer-session-id': customerSessionId
-        },
-        data: JSON.stringify(data)
-    });
+    if (workingMode == 'payment') {
+
+    } else {
+        return $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            url: '/submit',
+            headers: {
+                'Content-Language': 'en-us',
+                'is3ds2': $("#action-type:checked").val() == 'on' ? true : false
+                // 'Authorization': authorization,
+                // 'Customer-session-id': customerSessionId
+            },
+            data: JSON.stringify(data)
+        });
+    }
 }
 
 function makeDetailsCall(data) {
-    return $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8',
-        url: '/submit-complete',
-        data: JSON.stringify(data)
-    });
+    if (workingMode == 'payment') {
+
+    } else {
+        return $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            url: '/submit-complete',
+            data: JSON.stringify(data)
+        });
+    }
+}
+
+function handleActionForRedirect(response) {
+    if (response && response.action && response.action.type == 'redirect') {
+        localStorage.setItem("redirect-paymentData", JSON.stringify(response.action.paymentData));
+    } else {
+        localStorage.setItem("redirect-paymentData", '');
+    }
 }
 
 function showFinalResult(response) {
     if (response) {
         if (response.resultCode == 'Authorised') {
             $("#checkout-message").html(response.resultCode + " : " + response.merchantReference + " : " + response.pspReference);
-        } else if(response.resultCode == 'Refused') {
+        } else if (response.resultCode == 'Refused') {
             $("#merror-message").html(response.resultCode + " : " + response.refusalReason);
         } else {
             $("#merror-message").html(response.resultCode + " : (please check the logs for details.)");
@@ -55,6 +138,7 @@ function createPaymentConfiguration(paymentMethodsResponse) {
                 .then(response => {
                     if (response.action) {
                         // Drop-in handles the action object from the /payments response
+                        handleActionForRedirect(response);
                         dropin.handleAction(response.action);
                     } else {
                         // Your function to show the final result to the shopper
@@ -71,6 +155,7 @@ function createPaymentConfiguration(paymentMethodsResponse) {
                 .then(response => {
                     if (response.action) {
                         // Drop-in handles the action object from the /payments response
+                        handleActionForRedirect(response);
                         dropin.handleAction(response.action);
                     } else {
                         // Your function to show the final result to the shopper
@@ -94,28 +179,22 @@ function createPaymentConfiguration(paymentMethodsResponse) {
     };
 }
 
-
-function fetchPaymentMethod() {
-    $.ajax({ url: '/payment-methods' }).done(res => {
-        console.log(res);
-        paymentMethodsResponse = res;
-        configuration = createPaymentConfiguration(paymentMethodsResponse);
-        checkout = new AdyenCheckout(configuration);
-        dropin = checkout.create('dropin').mount('#dropin-container');
-    });
-}
-
-
 window.onload = function () {
     // init
-    var paymentMethodsResponse = {};
-    var configuration;
-    var checkout;
-    var dropin;
-
-    document.querySelector("#e2e-form").addEventListener('submit',function(event){
+    workingMode = $("#working-mode").val();
+    dropInUI = document.querySelector('#dropin-ui');
+    orderId = document.querySelector('#e2e-orderId');
+    customerSessionId = document.querySelector('#e2e-customerSessionId');
+    jwtToken = document.querySelector('#jwt-token');
+    document.querySelector("#e2e-form").addEventListener('submit', function (event) {
         event.preventDefault();
         // step1: Get available payment methods
-        fetchPaymentMethod();
+        fetchPaymentMethods().done(res => {
+            console.log(res);
+            const paymentMethodsResponse = res;
+            const configuration = createPaymentConfiguration(paymentMethodsResponse);
+            const checkout = new AdyenCheckout(configuration);
+            const dropin = checkout.create('dropin').mount('#dropin-container');
+        });
     });
 }
