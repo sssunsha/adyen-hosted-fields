@@ -10,7 +10,7 @@
     const resultURL = '${input.resultURL}/${input.referenceId}';
     const contentLanguage = '${input.languageCode}-${input.countryCode}';
     const submitApiUrl = '${input.submitURL}';
-    const submitCompleteApiUrl = '';
+    const submitCompleteApiUrl = '${input.submitCompleteURL}';
     const authorization = localStorage.getItem('o-auth-token') || localStorage.getItem('Authorization') || '';
     const customerSessionId = localStorage.getItem('guest-customer-session-id') || localStorage.getItem('Customer-session-id') || '';
     const paymentMethodsResponse = JSON.parse('${input.responseBody}'.replaceAll('&quot;', '"'));
