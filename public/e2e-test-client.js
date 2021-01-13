@@ -183,6 +183,8 @@ $(function () {
                         const dropInContainer = document.createElement('iframe');
                         const htmlSrcUrl = window.URL.createObjectURL(new Blob([result.dynamicScript.html], { type: 'text/html;charset=utf-8' }))
                         dropInContainer.src = htmlSrcUrl;
+                        dropInContainer.width = "100%";
+                        dropInContainer.height = "100%";
                         dropInUI.appendChild(dropInContainer);
                         // set local storage
                         localStorage.setItem("Authorization", jwtToken.value);
