@@ -7,7 +7,7 @@
     const orderId = '${input.orderId}';
     const referenceId = '${input.referenceId}';
     const amount = '${input.amount}';
-    const resultURL = '${input.resultURL}';
+    const resultURL = '${input.resultURL}/${input.referenceId}';
     const contentLanguage = '${input.languageCode}-${input.countryCode}';
     const submitApiUrl = '${input.submitURL}';
     const submitCompleteApiUrl = '';
@@ -21,15 +21,10 @@
 
     function makePayment(data) {
         const additionalData = [
-            {
-                'key': 'paymentMethod',
-                'value': data.paymentMethod
-            },
-            {
-                'key': 'allow3DS2',
-                'value': true
-            }];
-
+            {'key': 'paymentMethod', 'value': data.paymentMethod},
+            {'key': 'returnUrl', 'value': resultURL},
+            {'key': 'allow3DS2', 'value': true}
+        ];
         const submitBody = {
             'paymentMethod': 'CREDIT_CARD',
             'channel': 'BROWSER',
@@ -55,10 +50,12 @@
 
     function makeDetailsCall(data) {
         const additionalData = [
-            {
-                'key': 'state_data',
-                'value': data
-            }];
+            {'key': 'paymentData', 'value': data.paymentData || ''},
+            {'key': 'threeds2_fingerprint', 'value': data.details['threeds2.fingerprint'] || ''},
+            {'key': 'threeds2_challengeResult', 'value': data.details['threeds2.challengeResult'] || ''},
+            {'key': 'MD', 'value': data.details.MD || ''},
+            {'key': 'PaRes', 'value': data.details.PaRes || ''}
+        ];
         const submitCompleteBody = {
             'upscalePaymentSessionID': referenceId,
             'additionalData': additionalData
@@ -68,6 +65,11 @@
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             url: submitCompleteApiUrl,
+            headers: {
+                'Content-Language': contentLanguage,
+                'Authorization': authorization,
+                'Customer-session-id': customerSessionId
+            },
             data: JSON.stringify(submitCompleteBody)
         });
     }

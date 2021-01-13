@@ -1,69 +1,58 @@
 // // Adyen account: SAPCOM_TEST_GATEWAY
 $(function () {
+
     function getPaymentMethods() {
-        if (workingMode == 'payment') {
-            if (orderId.value) {
-                // start to post the initiate request
-                const requestBody = {
-                    'orderId': orderId.value,
-                    'emailAddress': 'upscale@sap.com',
-                    'resultURL': 'https://example.com/success',
-                    'cancelURL': 'https://example.com/cancel',
-                    'channel': 'BROWSER',
-                    'billingAddress': {
-                        'firstName': 'brainTree',
-                        'lastName': 'localE2ETest',
-                        'addressLine1': '123 Main Street',
-                        'addressLine2': '123 Main Street',
-                        'addressLine3': '123 Main Street',
-                        'city': 'Small Town',
-                        'state': 'CA',
-                        'country': 'US',
-                        'postalCode': 98765
-                    },
-                    'browserInfo': {
-                        'acceptHeader': 'text/html',
-                        'colorDepth': 48,
-                        'javaEnabled': false,
-                        'javaScriptEnabled': false,
-                        'language': 'de',
-                        'screenHeight': 1200,
-                        'screenWidth': 1600,
-                        'userAgent': 'Mozilla/4.0',
-                        'timezoneOffset': 60,
-                        'ipAddress': '192.168.0.1',
-                        'originUrl': 'https://example.com'
-                    }
-                }
-                $.ajax({
-                    type: 'POST',
-                    dataType: 'json',
-                    contentType: 'application/json; charset=utf-8',
-                    url: 'https://gateway-approuter-caas2-sap-test.cfapps.us10.hana.ondemand.com/consumer/payment-service/gateway/initiate',
-                    headers: {
-                        'Customer-session-id': customerSessionId.value,
-                        'Authorization': jwtToken.value,
-                        'Content-Language': 'en-us'
-                    },
-                    data: JSON.stringify(requestBody)
-                }).done(function (result) {
-                    if (result && result.pattern == 'HOSTED_FIELDS') {
-                        // start to render the hosted fileds with the response result
-                        const htmlSrcUrl = window.URL.createObjectURL(new Blob([result.dynamicScript.html], {type: 'text/html;charset=utf-8'}))
-                        dropInUI.src = htmlSrcUrl;
-                        // set local storage
-                        localStorage.setItem("Authorization", jwtToken.value);
-                        localStorage.setItem("Customer-session-id", customerSessionId.value);
-                    }
-                });
+        const dropInContainer = document.createElement('div');
+        dropInContainer.id = 'dropin-container';
+        dropInUI.appendChild(dropInContainer);
+        return $.ajax({ url: '/payment-methods' });
+    }
+
+    function initiatePayment() {
+        // start to post the initiate request
+        const requestBody = {
+            'orderId': orderId.value,
+            'emailAddress': 'upscale@sap.com',
+            'resultURL': 'https://example.com/success',
+            'cancelURL': 'https://example.com/cancel',
+            'channel': 'BROWSER',
+            'billingAddress': {
+                'firstName': 'brainTree',
+                'lastName': 'localE2ETest',
+                'addressLine1': '123 Main Street',
+                'addressLine2': '123 Main Street',
+                'addressLine3': '123 Main Street',
+                'city': 'Small Town',
+                'state': 'CA',
+                'country': 'US',
+                'postalCode': 98765
+            },
+            'browserInfo': {
+                'acceptHeader': 'text/html',
+                'colorDepth': 48,
+                'javaEnabled': false,
+                'javaScriptEnabled': false,
+                'language': 'de',
+                'screenHeight': 1200,
+                'screenWidth': 1600,
+                'userAgent': 'Mozilla/4.0',
+                'timezoneOffset': 60,
+                'ipAddress': '192.168.0.1',
+                'originUrl': 'https://example.com'
             }
-        } else {
-            // const ifrdoc = dropInUI.contentWindow.document;
-            // ifrdoc.open();
-			// ifrdoc.write('<div id="dropin-container"></div>');
-			// ifrdoc.close();
-            return $.ajax({ url: '/payment-methods' });
         }
+        return $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            url: 'https://gateway-approuter-caas2-sap-test.cfapps.us10.hana.ondemand.com/consumer/payment-service/gateway/initiate',
+            headers: {
+                'Customer-session-id': customerSessionId.value,
+                'Authorization': jwtToken.value,
+                'Content-Language': 'en-us'
+            },
+            data: JSON.stringify(requestBody)
+        });
     }
 
     function makePayment(data) {
@@ -178,20 +167,40 @@ $(function () {
         };
     }
     // init
-    workingMode = $("#working-mode").val() || 'payment';
     dropInUI = document.querySelector('#dropin-ui');
     orderId = document.querySelector('#e2e-orderId');
-    customerSessionId = document.querySelector('#e2e-customerSessionId');
     jwtToken = document.querySelector('#jwt-token');
+    customerSessionId = document.querySelector('#e2e-customerSessionId');
     $("#e2e-form").submit(function (event) {
         event.preventDefault();
-        // step1: Get available payment methods
-        getPaymentMethods().done(res => {
-            console.log(res);
-            const paymentMethodsResponse = res;
-            const configuration = createPaymentConfiguration(paymentMethodsResponse);
-            const checkout = new AdyenCheckout(configuration);
-            const dropin = checkout.create('dropin').mount('#dropin-container-local');
-        });
+        workingMode = $("#working-mode").val() || 'payment';
+        if (workingMode == 'payment') {
+            // call payment service initiate
+            if (!!orderId.value && (!!customerSessionId.value || !!jwtToken.value)) {
+                initiatePayment().done(function (result) {
+                    if (result && result.pattern == 'HOSTED_FIELDS') {
+                        // start to render the hosted fileds with the response result
+                        const dropInContainer = document.createElement('iframe');
+                        const htmlSrcUrl = window.URL.createObjectURL(new Blob([result.dynamicScript.html], { type: 'text/html;charset=utf-8' }))
+                        dropInContainer.src = htmlSrcUrl;
+                        dropInUI.appendChild(dropInContainer);
+                        // set local storage
+                        localStorage.setItem("Authorization", jwtToken.value);
+                        localStorage.setItem("Customer-session-id", customerSessionId.value);
+                    }
+                });
+            } else {
+                window.alert("missing orderId or token, cusstomer-id");
+            }
+        } else {
+            // step1: Get available payment methods
+            getPaymentMethods().done(res => {
+                console.log(res);
+                const paymentMethodsResponse = res;
+                const configuration = createPaymentConfiguration(paymentMethodsResponse);
+                const checkout = new AdyenCheckout(configuration);
+                const dropin = checkout.create('dropin').mount('#dropin-container');
+            });
+        }
     });
 });
